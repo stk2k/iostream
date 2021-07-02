@@ -1,0 +1,12 @@
+.idea/*
+composer.lock
+vendor/*
+!.gitkeep
+build/*
+coverage/*
+composer.phar
+var/logs/*
+var/cache/*
+var/command/*
+var/data/*
+.phpunit.result.cache

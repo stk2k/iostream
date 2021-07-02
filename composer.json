@@ -1,0 +1,35 @@
+{
+  "name": "stk2k/iostream",
+  "description": "Input and output stream library",
+  "keywords": ["PHP","Json","library"],
+  "homepage": "https://github.com/stk2k/iostream",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Katsuki Shuto",
+      "email": "stk2k@knot-framework.com"
+    }
+  ],
+  "require": {
+    "php": ">=7.2",
+    "ext-json": "*",
+    "stk2k/xstring": "~0.1",
+    "stk2k/file-system": "~0.1"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^8.5.15",
+    "php-coveralls/php-coveralls": "^2.0",
+    "mikey179/vfsstream": "^1.6.8"
+  },
+  "autoload": {
+    "psr-4": {
+      "stk2k\\iostream\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "stk2k\\iostream\\test\\": "test/"
+    }
+  }
+}
