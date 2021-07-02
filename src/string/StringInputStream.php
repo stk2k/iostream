@@ -3,9 +3,11 @@ declare(strict_types=1);
 
 namespace stk2k\iostream\string;
 
+use InvalidArgumentException;
+use Generator;
+
 use stk2k\iostream\BaseStream;
 use stk2k\iostream\constants\SeekOrigin;
-use stk2k\iostream\exception\EOFException;
 use stk2k\iostream\exception\IOException;
 use stk2k\iostream\InputStreamInterface;
 use stk2k\xstring\xStringBuffer;
@@ -22,10 +24,31 @@ class StringInputStream extends BaseStream implements InputStreamInterface
     /** @var int */
     private $length;
 
-    public function __construct(xString $source, int $length = null, string $fill = ' ')
+    /**
+     * StringInputStream constructor.
+     *
+     * @param $source
+     */
+    public function __construct($source)
     {
-        $this->source = new xStringBuffer($source, $length, $fill);
+        if(is_string($source)){
+            $source = new xString($source);
+        }
+        if (!($source instanceof xString) && !($source instanceof xStringBuffer)){
+            throw new InvalidArgumentException('Source must be instance of xString or xStringBuffer, but you passed: ' . get_class($source));
+        }
+        $this->source = $source instanceof xString ? new xStringBuffer($source) : $source;
         $this->length = $this->source->length();
+    }
+
+    /**
+     * @return Generator
+     */
+    public function getIterator(): Generator
+    {
+        foreach($this->source->substring($this->pos) as $c){
+            yield $c;
+        }
     }
 
     /**
@@ -108,12 +131,11 @@ class StringInputStream extends BaseStream implements InputStreamInterface
      * @param int|null $length
      *
      * @return string|null
-     * @throws EOFException
      */
     public function read(int $length = null): ?string
     {
         if ($this->pos >= $this->length){
-            throw new EOFException('String input stream reached to EOF: ' . $this->source->toString());
+            return null;
         }
         if ($length > 0){
             $str = $this->source->substring($this->pos, $length)->value();
@@ -132,12 +154,11 @@ class StringInputStream extends BaseStream implements InputStreamInterface
      * @param int|null $length
      *
      * @return string|null
-     * @throws EOFException
      */
     public function readLine(int $length = null) : ?string
     {
         if ($this->pos >= $this->length){
-            throw new EOFException('String input stream reached to EOF: ' . $this->source->toString());
+            return null;
         }
         $str = '';
         $read = 0;
@@ -166,12 +187,11 @@ class StringInputStream extends BaseStream implements InputStreamInterface
      * @param int $lines
      *
      * @return array
-     * @throws EOFException
      */
-    public function readLines(int $lines = -1) : array
+    public function readLines(int $lines = -1) : ?array
     {
         if ($this->pos >= $this->length){
-            throw new EOFException('String input stream reached to EOF: ' . $this->source->toString());
+            return null;
         }
         $lines = [];
         $str = '';

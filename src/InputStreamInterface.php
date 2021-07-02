@@ -3,9 +3,11 @@ declare(strict_types=1);
 
 namespace stk2k\iostream;
 
+use IteratorAggregate;
+
 use stk2k\iostream\exception\IOException;
 
-interface InputStreamInterface extends BaseStreamInterface
+interface InputStreamInterface extends BaseStreamInterface, IteratorAggregate
 {
     /**
      * Returns if this stream supports random acccess
@@ -75,9 +77,9 @@ interface InputStreamInterface extends BaseStreamInterface
      *
      * @param int $lines
      *
-     * @return string[]
+     * @return string[]|null
      *
      * @throws IOException
      */
-    public function readLines(int $lines = -1) : array;
+    public function readLines(int $lines = -1) : ?array;
 }

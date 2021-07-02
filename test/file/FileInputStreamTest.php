@@ -7,13 +7,33 @@ use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
 use stk2k\filesystem\File;
 use stk2k\iostream\constants\SeekOrigin;
-use stk2k\iostream\exception\EOFException;
 use stk2k\iostream\exception\FileInputStreamException;
 use stk2k\iostream\exception\IOException;
 use stk2k\iostream\file\FileInputStream;
 
 final class FileInputStreamTest extends TestCase
 {
+    public function testForeach()
+    {
+        vfsStream::setup("myrootdir");
+        vfsStream::copyFromFileSystem('test/_files');
+
+        $file = new File(vfsStream::url('myrootdir/b.txt'));
+        try{
+            $is = new FileInputStream($file);
+
+            ob_start();
+            foreach ($is as $c){
+                echo $c . '.';
+            }
+            $text = ob_get_clean();
+
+            $this->assertEquals('H.e.l.l.o.', $text);
+        }
+        catch(FileInputStreamException $ex){
+            $this->fail($ex->getMessage());
+        }
+    }
     public function testClose()
     {
         vfsStream::setup("myrootdir");
@@ -149,52 +169,24 @@ final class FileInputStreamTest extends TestCase
         catch(FileInputStreamException $ex){
             $this->fail($ex->getMessage());
         }
-
-        try{
-            $is->read(50);
-
-            $this->fail();
-        }
-        catch(EOFException $ex){
-            $this->assertTrue(true);
-        }
-        catch(FileInputStreamException $ex){
-            $this->fail($ex->getMessage());
-        }
     }
     public function testReadLine()
     {
         vfsStream::setup("myrootdir");
         vfsStream::copyFromFileSystem('test/_files');
 
-        $file = new File(vfsStream::url('myrootdir/a.txt'));
+        $file = new File(vfsStream::url('myrootdir/c.txt'));
 
         try{
-            $is = new FileInputStream($file);
+            $fis = new FileInputStream($file);
 
-            $text = $is->readLine();
+            ob_start();
+            while($line = $fis->readLine()){
+                echo $line . '.';    // Foo.Bar.Baz.
+            }
+            $text = ob_get_clean();
 
-            $this->assertEquals("PHP is a popular general-purpose scripting language that is especially suited to web development.\n", $text);
-
-            $text = $is->readLine();
-
-            $this->assertEquals("\n", $text);
-
-            $text = $is->readLine();
-
-            $this->assertEquals("Fast, flexible and pragmatic, PHP powers everything from your blog to the most popular websites in the world.", $text);
-        }
-        catch(FileInputStreamException $ex){
-            $this->fail($ex->getMessage());
-        }
-
-        try{
-            $is->readLine();
-
-            $this->fail();
-        }
-        catch(EOFException $ex){
-            $this->assertTrue(true);
+            $this->assertEquals('Foo.Bar.Baz.', $text);
         }
         catch(FileInputStreamException $ex){
             $this->fail($ex->getMessage());
@@ -213,8 +205,8 @@ final class FileInputStreamTest extends TestCase
             $lines = $is->readLines(2);
 
             $expected = [
-                "PHP is a popular general-purpose scripting language that is especially suited to web development.\n",
-                "\n",
+                "PHP is a popular general-purpose scripting language that is especially suited to web development.",
+                "",
             ];
             $this->assertEquals($expected, $lines);
 
@@ -223,23 +215,11 @@ final class FileInputStreamTest extends TestCase
             $lines = $is->readLines();
 
             $expected = [
-                "PHP is a popular general-purpose scripting language that is especially suited to web development.\n",
-                "\n",
+                "PHP is a popular general-purpose scripting language that is especially suited to web development.",
+                "",
                 "Fast, flexible and pragmatic, PHP powers everything from your blog to the most popular websites in the world.",
             ];
             $this->assertEquals($expected, $lines);
-        }
-        catch(FileInputStreamException $ex){
-            $this->fail($ex->getMessage());
-        }
-
-        try{
-            $is->readLines();
-
-            $this->fail();
-        }
-        catch(EOFException $ex){
-            $this->assertTrue(true);
         }
         catch(FileInputStreamException $ex){
             $this->fail($ex->getMessage());

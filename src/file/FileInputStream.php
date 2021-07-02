@@ -3,19 +3,23 @@ declare(strict_types=1);
 
 namespace stk2k\iostream\file;
 
+use Generator;
+
 use stk2k\filesystem\Exception\FileInputException;
 use stk2k\filesystem\Exception\FileOperatorException;
 use stk2k\filesystem\Exception\FileReaderException;
 use stk2k\filesystem\File;
 use stk2k\filesystem\FileReader;
 use stk2k\iostream\constants\SeekOrigin;
-use stk2k\iostream\exception\EOFException;
 use stk2k\iostream\exception\FileInputStreamException;
 use stk2k\iostream\exception\IOException;
 use stk2k\iostream\InputStreamInterface;
 
 final class FileInputStream implements InputStreamInterface
 {
+    /** @var File */
+    private $file;
+
     /** @var FileReader */
     private $reader;
 
@@ -29,10 +33,30 @@ final class FileInputStream implements InputStreamInterface
     public function __construct(File $file)
     {
         try{
+            $this->file = $file;
             $this->reader = $file->openForRead();
         }
         catch(FileInputException $ex){
             throw new FileInputStreamException('Failed to open file for read: ' . $file, $ex);
+        }
+    }
+
+    /**
+     * @return Generator
+     * @throws FileInputStreamException
+     * @throws FileReaderException
+     */
+    public function getIterator(): Generator
+    {
+        try{
+            $reader = $this->file->openForRead();
+
+            while($c = $reader->read(1)){
+                yield $c;
+            }
+        }
+        catch(FileInputException $ex){
+            throw new FileInputStreamException('Detected exception while reading file: ' . $this->file, $ex);
         }
     }
 
@@ -133,15 +157,11 @@ final class FileInputStream implements InputStreamInterface
      * @param int|null $length
      *
      * @return string|null
-     * @throws EOFException
      * @throws FileInputStreamException
      */
     public function read(int $length = null) : ?string
     {
         try{
-            if ($this->reader->isEOF()){
-                throw new EOFException('File input stream reached to EOF: ' . $this->reader->getFile());
-            }
             return $this->reader->read($length);
         }
         catch(FileReaderException $ex){
@@ -155,16 +175,13 @@ final class FileInputStream implements InputStreamInterface
      * @param int|null $length
      *
      * @return string|null
-     * @throws EOFException
      * @throws FileInputStreamException
      */
     public function readLine(int $length = null) : ?string
     {
         try{
-            if ($this->reader->isEOF()){
-                throw new EOFException('File input stream reached to EOF: ' . $this->reader->getFile());
-            }
-            return $this->reader->getLine($length);
+            $line = $this->reader->getLine($length);
+            return $line ? rtrim($line, "\n\r") : $line;
         }
         catch(FileReaderException $ex){
             throw new FileInputStreamException('Failed to read line from file: ' . $this->reader->getFile(), $ex);
@@ -179,24 +196,25 @@ final class FileInputStream implements InputStreamInterface
      * @param int $lines
      *
      * @return array
-     * @throws EOFException
      * @throws FileInputStreamException
      */
-    public function readLines(int $lines = -1) : array
+    public function readLines(int $lines = -1) : ?array
     {
         try{
-            if ($this->reader->isEOF()){
-                throw new EOFException('File input stream reached to EOF: ' . $this->reader->getFile());
-            }
-            $ret = [];
+            $ret = null;
             if ($lines > 0){
                 for($i=0; $i<$lines; $i++){
-                    $ret[] = $this->reader->getLine();
+                    $line = $this->reader->getLine();
+                    if (!$line){
+                        return $ret;
+                    }
+                    $ret[] = rtrim($line, "\n\r");
                 }
             }
             else{
                 while(!$this->reader->isEOF()){
-                    $ret[] = $this->reader->getLine();
+                    $line = $this->reader->getLine();
+                    $ret[] = rtrim($line, "\n\r");
                 }
             }
             return $ret;

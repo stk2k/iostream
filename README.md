@@ -12,6 +12,71 @@ Input and output stream library
 
 Input and output stream library
 
+## Demo
+
+### StringInputStream
+
+```php
+use stk2k\iostream\string\StringInputStream;
+
+// foreach
+$sis = new StringInputStream('Hello');
+foreach ($sis as $c){
+    echo $c . '.';    // H.e.l.l.o.
+}
+
+// read
+$sis = new StringInputStream('Hello');
+while($c = $sis->read(1)){
+    echo $c . '.';    // H.e.l.l.o.
+}
+
+// read line
+$sis = new StringInputStream("Foo\nBar\nBaz");
+while($line = $sis->readLine()){
+    echo $line . '.';    // Foo.Bar.Baz.
+}
+
+// read lines
+$sis = new StringInputStream("Foo\nBar\nBaz");
+$lines = $sis->readLines();
+echo implode('.', $lines);    // Foo.Bar.Baz
+```
+
+### FileInputStream
+
+```php
+use stk2k\filesystem\File;
+use stk2k\iostream\file\FileInputStream;
+
+// foreach
+$file = new File('test/_files/b.txt');
+$fis = new FileInputStream($file);
+foreach ($fis as $c){
+    echo $c . '.';    // H.e.l.l.o.
+}
+
+// read
+$file = new File('test/_files/b.txt');
+$fis = new FileInputStream($file);
+while($c = $fis->read(1)){
+    echo $c . '.';    // H.e.l.l.o.
+}
+
+// read line
+$file = new File('test/_files/c.txt');
+$fis = new FileInputStream($file);
+while($line = $fis->readLine()){
+    echo $line . '.';    // Foo.Bar.Baz.
+}
+
+// read lines
+$file = new File('test/_files/c.txt');
+$fis = new FileInputStream($file);
+$lines = $fis->readLines();
+echo implode('.', $lines);    // Foo.Bar.Baz
+```
+
 ## Requirement
 
 PHP 7.1 or later
