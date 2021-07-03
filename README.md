@@ -4,7 +4,7 @@ Input and output stream library
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/stk2k/iostream.svg?style=flat-square)](https://packagist.org/packages/stk2k/iostream)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
 [![Build Status](https://travis-ci.org/stk2k/iostream.svg?branch=master)](https://travis-ci.org/stk2k/iostream)
-[![Coverage Status](https://coveralls.io/repos/github/stk2k/iostream/badge.svg?branch=master)](https://coveralls.io/github/stk2k/iostream?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/stk2k/iostream/badge.svg?branch=main)](https://coveralls.io/repos/github/stk2k/iostream/badge.svg?branch=main)
 [![Code Climate](https://codeclimate.com/github/stk2k/iostream/badges/gpa.svg)](https://codeclimate.com/github/stk2k/iostream)
 [![Total Downloads](https://img.shields.io/packagist/dt/stk2k/iostream.svg?style=flat-square)](https://packagist.org/packages/stk2k/iostream)
 
