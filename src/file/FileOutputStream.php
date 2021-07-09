@@ -122,7 +122,7 @@ final class FileOutputStream implements OutputStreamInterface
     /**
      * Write multiple lines into steam.
      *
-     * @param string[] $lines
+     * @param array $lines
      *
      * @return void
      *

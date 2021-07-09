@@ -42,6 +42,25 @@ class StringInputStream extends BaseStream implements InputStreamInterface
     }
 
     /**
+     * @param xStringBuffer $source
+     *
+     * @return self
+     */
+    protected function setSource(xStringBuffer $source) : self
+    {
+        $this->source = $source;
+        return $this;
+    }
+
+    /**
+     * @return xStringBuffer
+     */
+    protected function getSource() : xStringBuffer
+    {
+        return $this->source;
+    }
+
+    /**
      * @return Generator
      */
     public function getIterator(): Generator
@@ -130,7 +149,7 @@ class StringInputStream extends BaseStream implements InputStreamInterface
     /**
      * @param int|null $length
      *
-     * @return string|null
+     * @return xString|null
      */
     public function read(int $length = null): ?string
     {
@@ -153,7 +172,7 @@ class StringInputStream extends BaseStream implements InputStreamInterface
      *
      * @param int|null $length
      *
-     * @return string|null
+     * @return xString|null
      */
     public function readLine(int $length = null) : ?string
     {
@@ -167,10 +186,10 @@ class StringInputStream extends BaseStream implements InputStreamInterface
             $this->pos ++;
             $read ++;
             if ($length > 0 && $read >= $length){
-                return $str;
+                break;
             }
             if ($c === "\n" || $c === "\r"){
-                return $str;
+                break;
             }
             else{
                 $str .= $c;
@@ -186,7 +205,7 @@ class StringInputStream extends BaseStream implements InputStreamInterface
      *
      * @param int $lines
      *
-     * @return array
+     * @return array|null
      */
     public function readLines(int $lines = -1) : ?array
     {

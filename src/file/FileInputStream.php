@@ -162,7 +162,11 @@ final class FileInputStream implements InputStreamInterface
     public function read(int $length = null) : ?string
     {
         try{
-            return $this->reader->read($length);
+            $input = $this->reader->read($length);
+            if ($input === null){
+                return null;
+            }
+            return $input;
         }
         catch(FileReaderException $ex){
             throw new FileInputStreamException('Failed to read file: ' . $this->reader->getFile(), $ex);
@@ -181,7 +185,10 @@ final class FileInputStream implements InputStreamInterface
     {
         try{
             $line = $this->reader->getLine($length);
-            return $line ? rtrim($line, "\n\r") : $line;
+            if ($line === null){
+                return null;
+            }
+            return rtrim($line, "\n\r");
         }
         catch(FileReaderException $ex){
             throw new FileInputStreamException('Failed to read line from file: ' . $this->reader->getFile(), $ex);
@@ -195,7 +202,7 @@ final class FileInputStream implements InputStreamInterface
      *
      * @param int $lines
      *
-     * @return array
+     * @return array|null
      * @throws FileInputStreamException
      */
     public function readLines(int $lines = -1) : ?array

@@ -77,7 +77,7 @@ interface InputStreamInterface extends BaseStreamInterface, IteratorAggregate
      *
      * @param int $lines
      *
-     * @return string[]|null
+     * @return array|null
      *
      * @throws IOException
      */

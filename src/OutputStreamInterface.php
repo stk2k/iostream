@@ -50,7 +50,7 @@ interface OutputStreamInterface extends BaseStreamInterface
     /**
      * Write multiple lines into steam.
      *
-     * @param string[] $lines
+     * @param array $lines
      *
      * @return void
      *

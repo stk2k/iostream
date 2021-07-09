@@ -43,6 +43,18 @@ $lines = $sis->readLines();
 echo implode('.', $lines);    // Foo.Bar.Baz
 ```
 
+### PushBackStringInputStream
+
+```php
+use stk2k\iostream\string\PushBackStringInputStream;
+use stk2k\xstring\xStringBuffer;
+
+$sis = new PushBackStringInputStream(', World!');
+
+$sis->unread(new xStringBuffer('olleH'));
+echo $sis->readLine();          // Hello, World!
+```
+
 ### FileInputStream
 
 ```php

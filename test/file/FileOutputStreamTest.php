@@ -11,6 +11,7 @@ use stk2k\iostream\exception\FileOutputStreamException;
 use stk2k\iostream\exception\IOException;
 use stk2k\iostream\file\FileInputStream;
 use stk2k\iostream\file\FileOutputStream;
+use stk2k\xstring\xs;
 
 final class FileOutputStreamTest extends TestCase
 {
@@ -91,22 +92,22 @@ final class FileOutputStreamTest extends TestCase
 
             $os = new FileOutputStream($file);
 
-            $os->writeLine("test");
+            $os->write("test");
 
             $is = new FileInputStream($file);
 
-            $this->assertEquals('test' . PHP_EOL, $is->read(100));
+            $this->assertEquals('test', $is->read(100));
 
             vfsStream::setup("myrootdir");
             vfsStream::copyFromFileSystem('test/_files');
 
             $os = new FileOutputStream($file, File::FILE_WRITE_APPEND);
 
-            $os->writeLine("test");
+            $os->write("test");
 
             $is = new FileInputStream($file);
 
-            $this->assertEquals(file_get_contents('test/_files/a.txt') . 'test' . PHP_EOL, $is->read(999));
+            $this->assertEquals(file_get_contents('test/_files/a.txt') . 'test', $is->read(999));
         }
         catch(FileOutputStreamException|FileInputStreamException $ex){
             $this->fail($ex->getMessage());
